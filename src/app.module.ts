@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { BoardModule } from './board/board.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BoardModule } from './board/board.module';
     UserModule,
     WorkspaceModule,
     BoardModule,
+    TaskModule,
   ],
   controllers: [],
   providers: [],

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Board } from './board.entity';
 
-@Entity()
+@Entity('guest')
 export class Guest {
   @PrimaryGeneratedColumn('uuid')
   id: string;

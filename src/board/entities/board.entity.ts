@@ -8,8 +8,9 @@ import {
 } from 'typeorm';
 import { Guest } from './guest.entity';
 import { Workspace } from 'src/workspace/entities/workspace.entity';
+import { List } from './list.entity';
 
-@Entity()
+@Entity('board')
 export class Board {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -20,8 +21,8 @@ export class Board {
   @Column('text')
   description: string;
 
-  @Column('simple-array')
-  list: string[];
+  @OneToMany(() => List, (list) => list.board)
+  list: List[];
 
   @OneToMany(() => Guest, (guest) => guest.board)
   guests: Guest[];
