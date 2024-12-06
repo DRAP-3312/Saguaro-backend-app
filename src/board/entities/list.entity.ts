@@ -20,7 +20,7 @@ export class List {
   @Column('text')
   position: string;
 
-  @OneToMany(() => Task, (task) => task.list)
+  @OneToMany(() => Task, (task) => task.list, { eager: true })
   tasks: Task[];
 
   @ManyToOne(() => Board, (board) => board.list)

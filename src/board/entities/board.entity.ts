@@ -21,13 +21,21 @@ export class Board {
   @Column('text')
   description: string;
 
-  @OneToMany(() => List, (list) => list.board)
+  @OneToMany(() => List, (list) => list.board, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   list: List[];
 
-  @OneToMany(() => Guest, (guest) => guest.board)
+  @OneToMany(() => Guest, (guest) => guest.board, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    eager: true,
+  })
   guests: Guest[];
 
-  @ManyToOne(() => Workspace, (ws) => ws.boards)
+  @ManyToOne(() => Workspace, (ws) => ws.boards, { eager: true })
   @JoinColumn({ name: 'idWorkspace' })
   workspace: Workspace;
 }
