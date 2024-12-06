@@ -136,20 +136,28 @@ export class BoardService {
       if (!board)
         throw new NotFoundException(`Board with id ${idBoard} not found`);
 
-      await process.manager.remove(Guest, board.guests);
-      const listas = await process.manager.findBy(List, {
-        board: { id: idBoard },
-      });
-      listas.forEach(async (list) => {
-        list.tasks.forEach(async (task) => {
-          await process.manager.remove(CommentTask, task.comments);
-        });
-        await process.manager.remove(Task, list.tasks);
-      });
+      const deleteComments = board.list.flatMap((list) =>
+        list.tasks.flatMap((task) =>
+          task.comments.map((comment) =>
+            process.manager.remove(CommentTask, comment),
+          ),
+        ),
+      );
+      await Promise.all(deleteComments);
+
+      const deleteTasks = board.list.flatMap((list) =>
+        process.manager.remove(Task, list.tasks),
+      );
+      await Promise.all(deleteTasks);
+
       await process.manager.remove(List, board.list);
+
+      await process.manager.remove(Guest, board.guests);
+
       await process.manager.remove(Board, board);
+
       await process.commitTransaction();
-      return { message: 'board deleted successfully' };
+      return { message: 'Board deleted successfully' };
     } catch (error) {
       await process.rollbackTransaction();
       throw error;
