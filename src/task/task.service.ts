@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/task/create-task.dto';
-import { UpdateTaskDto } from './dto/task/update-task.dto';
 import { Task } from './entities/task.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -8,6 +7,7 @@ import { List } from 'src/board/entities/list.entity';
 import { CreateCommentDto } from './dto/comment/create-comment.dto';
 import { User } from 'src/user/entities/user.entity';
 import { CommentTask } from './entities/comment.entity';
+import { exceptionMessage } from 'src/common/expectionsMessage';
 
 @Injectable()
 export class TaskService {
@@ -24,8 +24,7 @@ export class TaskService {
       const list = await process.manager.findOne(List, {
         where: { id: idList },
       });
-      if (!list)
-        throw new NotFoundException(`list with id ${idList} not found`);
+      if (!list) exceptionMessage('List', idList, 'notFount', 'id');
 
       const task = process.manager.create(Task, {
         ...data,
@@ -55,15 +54,13 @@ export class TaskService {
       const task = await process.manager.findOne(Task, {
         where: { id: idTask },
       });
-      if (!task)
-        throw new NotFoundException(`Task with id ${idTask} not found`);
+      if (!task) exceptionMessage('Task', idTask, 'notFount', 'id');
 
       const user = await process.manager.findOne(User, {
         where: { id: sender },
       });
 
-      if (!user)
-        throw new NotFoundException(`Sender with id ${sender} not found`);
+      if (!user) exceptionMessage('Sender', sender, 'notFount', 'id');
 
       const comment = process.manager.create(CommentTask, {
         ...data,

@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/user/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,6 +8,7 @@ import { Rol } from './entities/rol.entity';
 import { Repository } from 'typeorm';
 import { CreateRolDto } from './dto/rol/create-rol.dto';
 import { User } from './entities/user.entity';
+import { exceptionMessage } from 'src/common/expectionsMessage';
 
 @Injectable()
 export class UserService {
@@ -23,8 +23,7 @@ export class UserService {
     try {
       const name = 'user';
       const getRol = await this.findRolbyName(name);
-      if (!getRol)
-        throw new NotFoundException(`Rol with name ${name} not found`);
+      if (!getRol) exceptionMessage('Rol', name, 'notFount', 'name');
       const user = this.userRepo.create({
         ...createUserDto,
         rol: getRol,
@@ -50,7 +49,7 @@ export class UserService {
 
   async findRepitRolbyName(name: string): Promise<Rol> {
     const rol = await this.rolRepo.findOne({ where: { name: name } });
-    if (rol) throw new BadRequestException(`Name '${rol.name}' already exists`);
+    if (rol) throw new BadRequestException(`Name '${name}' already exists`);
     return rol;
   }
 
@@ -69,7 +68,7 @@ export class UserService {
       where: { id },
       relations: { rol: true, workspace: true },
     });
-    if (!user) throw new NotFoundException(`User with id ${id} not found`);
+    if (!user) exceptionMessage('User', id, 'notFount', 'id');
 
     return user;
   }
@@ -77,7 +76,7 @@ export class UserService {
   async deleteUser(id: string) {
     try {
       const user = await this.findUserbyId(id);
-      if (!user) throw new NotFoundException(`User with id ${id} not found`);
+      if (!user) exceptionMessage('User', id, 'notFount', 'id');
       await this.userRepo.remove(user);
       return { messsage: 'User deleted successfully' };
     } catch (error) {

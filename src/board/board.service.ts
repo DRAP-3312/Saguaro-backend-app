@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { UpdateBoardDto } from './dto/update-board.dto';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Board } from './entities/board.entity';
@@ -12,6 +11,7 @@ import { List } from './entities/list.entity';
 import { AddListToBoard } from './dto/others/addListToboard.dto';
 import { Task } from 'src/task/entities/task.entity';
 import { CommentTask } from 'src/task/entities/comment.entity';
+import { exceptionMessage } from 'src/common/expectionsMessage';
 
 @Injectable()
 export class BoardService {
@@ -37,14 +37,12 @@ export class BoardService {
       const user = await process.manager.findOne(User, {
         where: { id: idUser },
       });
-      if (!user)
-        throw new NotFoundException(`User with id ${idUser} not found`);
+      if (!user) exceptionMessage('User', idUser, 'notFount', 'id');
 
       const ws = await process.manager.findOne(Workspace, {
         where: { id: idWs },
       });
-      if (!ws)
-        throw new NotFoundException(`Workspace with id ${idWs} not found`);
+      if (!ws) exceptionMessage('Workspace', idWs, 'notFount', 'id');
 
       const board = process.manager.create(Board, {
         ...data,
@@ -75,7 +73,7 @@ export class BoardService {
       where: { id },
     });
 
-    if (!board) throw new NotFoundException(`Board with id ${id} not found`);
+    if (!board) exceptionMessage('Board', id, 'notFount', 'id');
     return board;
   }
 
@@ -93,15 +91,13 @@ export class BoardService {
       const user = await process.manager.findOne(User, {
         where: { id: idUser },
       });
-      if (!user)
-        throw new NotFoundException(`User with id ${idUser} not found`);
+      if (!user) exceptionMessage('User', idUser, 'notFount', 'id');
 
       const board = await process.manager.findOne(Board, {
         where: { id: idBoard },
       });
 
-      if (!board)
-        throw new NotFoundException(`Board with id ${idBoard} not found`);
+      if (!board) exceptionMessage('Board', idBoard, 'notFount', 'id');
 
       const guest = process.manager.create(Guest, {
         idUser: user.id,
@@ -133,8 +129,7 @@ export class BoardService {
         where: { id: idBoard },
       });
 
-      if (!board)
-        throw new NotFoundException(`Board with id ${idBoard} not found`);
+      if (!board) exceptionMessage('Board', idBoard, 'notFount', 'id');
 
       const deleteComments = board.list.flatMap((list) =>
         list.tasks.flatMap((task) =>
@@ -175,8 +170,7 @@ export class BoardService {
         where: { id: idBoard },
       });
 
-      if (!board)
-        throw new NotFoundException(`Board with id ${idBoard} not found`);
+      if (!board) exceptionMessage('Board', idBoard, 'notFount', 'id');
 
       const list = await process.manager.create(List, {
         ...data,

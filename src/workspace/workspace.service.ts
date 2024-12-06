@@ -1,18 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
-import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { exceptionMessage } from 'src/common/expectionsMessage';
 
 @Injectable()
 export class WorkspaceService {
   constructor(
     @InjectRepository(Workspace)
     private readonly wsRepo: Repository<Workspace>,
-    // @InjectRepository(User)
-    // private readonly userRepo: Repository<User>,
     private readonly dataSource: DataSource,
   ) {}
   async create(
@@ -27,8 +25,7 @@ export class WorkspaceService {
         relations: { rol: true, workspace: true },
       });
 
-      if (!user)
-        throw new NotFoundException(`User with id ${iduser} not found`);
+      if (!user) exceptionMessage('User', iduser, 'notFount', 'id');
 
       const ws = query.manager.create(Workspace, {
         ...createWorkspaceDto,
