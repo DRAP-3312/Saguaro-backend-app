@@ -23,7 +23,7 @@ export class Task {
   @Column('text')
   importance: string;
 
-  @OneToMany(() => CommentTask, (coment) => coment.task)
+  @OneToMany(() => CommentTask, (coment) => coment.task, { eager: true })
   comments: CommentTask[];
 
   @ManyToOne(() => List, (list) => list.tasks)

@@ -64,7 +64,7 @@ export class BoardController {
 
   @Delete(':id')
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: 'delete board successfully',
   })
   @ApiResponse({ status: 400, description: 'Bad request' })

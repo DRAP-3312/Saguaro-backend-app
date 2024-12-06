@@ -10,6 +10,8 @@ import { Workspace } from 'src/workspace/entities/workspace.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { List } from './entities/list.entity';
 import { AddListToBoard } from './dto/others/addListToboard.dto';
+import { Task } from 'src/task/entities/task.entity';
+import { CommentTask } from 'src/task/entities/comment.entity';
 
 @Injectable()
 export class BoardService {
@@ -135,10 +137,19 @@ export class BoardService {
         throw new NotFoundException(`Board with id ${idBoard} not found`);
 
       await process.manager.remove(Guest, board.guests);
+      const listas = await process.manager.findBy(List, {
+        board: { id: idBoard },
+      });
+      listas.forEach(async (list) => {
+        list.tasks.forEach(async (task) => {
+          await process.manager.remove(CommentTask, task.comments);
+        });
+        await process.manager.remove(Task, list.tasks);
+      });
       await process.manager.remove(List, board.list);
       await process.manager.remove(Board, board);
       await process.commitTransaction();
-      return { message: 'board deleted successfully', state: 'Ok' };
+      return { message: 'board deleted successfully' };
     } catch (error) {
       await process.rollbackTransaction();
       throw error;
