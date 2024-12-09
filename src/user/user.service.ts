@@ -1,7 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/user/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rol } from './entities/rol.entity';
@@ -9,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateRolDto } from './dto/rol/create-rol.dto';
 import { User } from './entities/user.entity';
 import { exceptionMessage } from 'src/common/expectionsMessage';
+import { UpdateUserDto } from './dto/user/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -66,7 +64,7 @@ export class UserService {
   async findUserbyId(id: string): Promise<User> {
     const user = this.userRepo.findOne({
       where: { id },
-      relations: { rol: true, workspace: true },
+      relations: { rol: true, workspace: true, notify: true },
     });
     if (!user) exceptionMessage('User', id, 'notFount', 'id');
 
@@ -79,6 +77,21 @@ export class UserService {
       if (!user) exceptionMessage('User', id, 'notFount', 'id');
       await this.userRepo.remove(user);
       return { messsage: 'User deleted successfully' };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const user: Partial<User> = {
+        id,
+        ...updateUserDto,
+      };
+      const userUpdated = await this.userRepo.preload(user);
+      await this.userRepo.save(userUpdated);
+
+      return userUpdated;
     } catch (error) {
       throw error;
     }

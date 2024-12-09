@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { exceptionMessage } from 'src/common/expectionsMessage';
+import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 
 @Injectable()
 export class WorkspaceService {
@@ -48,4 +49,18 @@ export class WorkspaceService {
     return await this.wsRepo.find({ relations: { boards: true, user: true } });
   }
 
+  async updateWorkspace(id: string, updateWorkspaceDto: UpdateWorkspaceDto) {
+    try {
+      const workspace: Partial<Workspace> = {
+        id,
+        ...updateWorkspaceDto,
+      };
+
+      const updateWS = await this.wsRepo.preload(workspace);
+      await this.wsRepo.save(updateWS);
+      return updateWS;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

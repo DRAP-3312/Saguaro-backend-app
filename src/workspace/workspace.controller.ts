@@ -41,4 +41,15 @@ export class WorkspaceController {
   findAll() {
     return this.workspaceService.findAll();
   }
+
+  @Patch(':id')
+  @ApiResponse({ status: 201, description: 'board updated', type: Workspace })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
+  updateWorkspace(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateWorkspaceDto: UpdateWorkspaceDto,
+  ) {
+    return this.workspaceService.updateWorkspace(id, updateWorkspaceDto);
+  }
 }
