@@ -14,7 +14,7 @@ import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Workspace } from './entities/workspace.entity';
 
-@ApiTags('workspace')
+@ApiTags('Workspace')
 @Controller('workspace')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}

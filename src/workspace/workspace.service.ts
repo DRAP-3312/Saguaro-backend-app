@@ -47,4 +47,5 @@ export class WorkspaceService {
   async findAll(): Promise<Workspace[]> {
     return await this.wsRepo.find({ relations: { boards: true, user: true } });
   }
+
 }

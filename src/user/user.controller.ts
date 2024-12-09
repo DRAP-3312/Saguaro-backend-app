@@ -15,7 +15,7 @@ import { CreateRolDto } from './dto/rol/create-rol.dto';
 import { Rol } from './entities/rol.entity';
 import { User } from './entities/user.entity';
 
-@ApiTags('user')
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

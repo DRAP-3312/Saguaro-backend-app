@@ -17,7 +17,7 @@ import { AddGuestToBoard } from './dto/others/addGuesttoBoard.dto';
 import { AddListToBoard } from './dto/others/addListToboard.dto';
 import { List } from './entities/list.entity';
 
-@ApiTags('board')
+@ApiTags('Board')
 @Controller('board')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -12,6 +12,8 @@ import { AddListToBoard } from './dto/others/addListToboard.dto';
 import { Task } from 'src/task/entities/task.entity';
 import { CommentTask } from 'src/task/entities/comment.entity';
 import { exceptionMessage } from 'src/common/expectionsMessage';
+import { WorkspaceService } from 'src/workspace/workspace.service';
+import { relations } from 'src/common/foundRelationArray';
 
 @Injectable()
 export class BoardService {
@@ -19,6 +21,7 @@ export class BoardService {
     private readonly dataSource: DataSource,
     @InjectRepository(Board)
     private readonly boardRepo: Repository<Board>,
+    private readonly wsService: WorkspaceService,
   ) {}
 
   async create({ idWs, idUser, ...data }: CreateBoardDto): Promise<Board> {
@@ -36,6 +39,7 @@ export class BoardService {
     try {
       const user = await process.manager.findOne(User, {
         where: { id: idUser },
+        relations: { workspace: true },
       });
       if (!user) exceptionMessage('User', idUser, 'notFount', 'id');
 
@@ -43,6 +47,11 @@ export class BoardService {
         where: { id: idWs },
       });
       if (!ws) exceptionMessage('Workspace', idWs, 'notFount', 'id');
+
+      if (!relations(user.workspace, ws, 'id'))
+        throw new BadRequestException(
+          'El usuario no es propietario del Workspace',
+        );
 
       const board = process.manager.create(Board, {
         ...data,

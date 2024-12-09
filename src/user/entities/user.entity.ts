@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Rol } from './rol.entity';
 import { Workspace } from 'src/workspace/entities/workspace.entity';
+import { Notification } from 'src/notification/entities/notification.entity';
 
 @Entity('user')
 export class User {
@@ -32,4 +33,7 @@ export class User {
 
   @OneToMany(() => Workspace, (ws) => ws.user)
   workspace: Workspace[];
+
+  @OneToMany(() => Notification, (noti) => noti.user)
+  notify: Notification[];
 }
