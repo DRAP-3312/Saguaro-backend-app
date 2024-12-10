@@ -1,5 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Auth } from 'src/auth/entities/auth.entity';
 
 @Entity('rol')
 export class Rol {
@@ -9,6 +15,6 @@ export class Rol {
   @Column('text')
   name: string;
 
-  @OneToMany(() => User, (user) => user.rol)
-  user: User;
+  @OneToOne(() => Auth, (auth) => auth.rol)
+  auth: Auth;
 }

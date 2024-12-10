@@ -17,23 +17,6 @@ export class UserService {
     private readonly userRepo: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    try {
-      const name = 'user';
-      const getRol = await this.findRolbyName(name);
-      if (!getRol) exceptionMessage('Rol', name, 'notFount', 'name');
-      const user = this.userRepo.create({
-        ...createUserDto,
-        rol: getRol,
-        workspace: [],
-      });
-      await this.userRepo.save(user);
-      return user;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async createRol(createRolDto: CreateRolDto) {
     try {
       await this.findRepitRolbyName(createRolDto.name);
@@ -57,14 +40,14 @@ export class UserService {
 
   async findAllUser(): Promise<User[]> {
     return await this.userRepo.find({
-      relations: { rol: true, workspace: true },
+      relations: { workspace: true },
     });
   }
 
   async findUserbyId(id: string): Promise<User> {
     const user = this.userRepo.findOne({
       where: { id },
-      relations: { rol: true, workspace: true, notify: true },
+      relations: { workspace: true, notify: true },
     });
     if (!user) exceptionMessage('User', id, 'notFount', 'id');
 
@@ -97,4 +80,3 @@ export class UserService {
     }
   }
 }
-0;

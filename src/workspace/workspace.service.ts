@@ -23,7 +23,7 @@ export class WorkspaceService {
     try {
       const user = await query.manager.findOne(User, {
         where: { id: iduser },
-        relations: { rol: true, workspace: true },
+        relations: { workspace: true },
       });
 
       if (!user) exceptionMessage('User', iduser, 'notFount', 'id');

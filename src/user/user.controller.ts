@@ -21,14 +21,6 @@ import { UpdateUserDto } from './dto/user/update-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  @ApiResponse({ status: 201, description: 'User was created', type: User })
-  @ApiResponse({ status: 400, description: 'Bad request' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
   @Post('rol')
   @ApiResponse({ status: 201, description: 'Rol was created', type: Rol })
   @ApiResponse({ status: 400, description: 'Bad request' })

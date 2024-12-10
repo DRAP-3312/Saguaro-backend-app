@@ -6,6 +6,8 @@ import { WorkspaceModule } from './workspace/workspace.module';
 import { BoardModule } from './board/board.module';
 import { TaskModule } from './task/task.module';
 import { NotificationModule } from './notification/notification.module';
+import { AuthModule } from './auth/auth.module';
+
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { NotificationModule } from './notification/notification.module';
     BoardModule,
     TaskModule,
     NotificationModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
