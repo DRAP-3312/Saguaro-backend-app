@@ -22,11 +22,11 @@ export class Auth {
   @Column('bool')
   isActive: boolean;
 
-  @OneToOne(() => User, (user) => user.auth)
+  @OneToOne(() => User, (user) => user.auth, { eager: true })
   @JoinColumn({ name: 'idUser' })
   user: User;
 
-  @OneToOne(() => Rol, (rol) => rol.auth)
+  @OneToOne(() => Rol, (rol) => rol.auth, { eager: true })
   @JoinColumn({ name: 'idRol' })
   rol: Rol;
 }

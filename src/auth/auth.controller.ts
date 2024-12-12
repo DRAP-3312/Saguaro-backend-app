@@ -1,19 +1,13 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth } from './entities/auth.entity';
 import { LoginDto } from './dto/login.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './decorators/get-user.decorator';
+import { User } from 'src/user/entities/user.entity';
+import { ValidRole } from './interfaces/roles-protect.interface';
+import { AuthProtected } from './decorators/auth.decorator';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -37,15 +31,16 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  @Get('test')
-  @UseGuards(AuthGuard())
   @ApiResponse({ status: 201, description: 'test ok' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
-  testPrivateRoute() {
+  @Get('test')
+  @AuthProtected(ValidRole.ADMIN)
+  testPrivateRoute(@GetUser() user: User) {
     return {
       ok: true,
-      message: 'buenas',
+      message: 'prueba validacion y autorizacion',
+      user,
     };
   }
 }

@@ -15,6 +15,8 @@ import { CreateRolDto } from './dto/rol/create-rol.dto';
 import { Rol } from './entities/rol.entity';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/user/update-user.dto';
+import { AuthProtected } from 'src/auth/decorators/auth.decorator';
+import { ValidRole } from 'src/auth/interfaces/roles-protect.interface';
 
 @ApiTags('User')
 @Controller('user')
@@ -56,6 +58,7 @@ export class UserController {
     return this.userService.updateUser(id, updateUserDto);
   }
 
+  @AuthProtected(ValidRole.ADMIN)
   @Delete(':id')
   @ApiResponse({
     status: 201,
