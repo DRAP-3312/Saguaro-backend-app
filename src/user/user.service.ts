@@ -45,7 +45,7 @@ export class UserService {
   }
 
   async findUserbyId(id: string): Promise<User> {
-    const user = this.userRepo.findOne({
+    const user = await this.userRepo.findOne({
       where: { id },
       relations: { workspace: true, notify: true },
     });

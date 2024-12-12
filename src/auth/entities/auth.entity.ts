@@ -16,8 +16,11 @@ export class Auth {
   @Column('text')
   userName: string;
 
-  @Column('text')
+  @Column('text', { select: false })
   password: string;
+
+  @Column('bool')
+  isActive: boolean;
 
   @OneToOne(() => User, (user) => user.auth)
   @JoinColumn({ name: 'idUser' })

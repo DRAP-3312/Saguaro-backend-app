@@ -1,10 +1,68 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { RegisterAuthDto } from './dto/register-auth.dto';
+import { DataSource, Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Rol } from 'src/user/entities/rol.entity';
+import { Auth } from './entities/auth.entity';
+import { LoginDto } from './dto/login.dto';
+import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(Auth)
+    private readonly authRepo: Repository<Auth>,
+    private readonly jwtService: JwtService,
+  ) {}
+  async register({ user, password, userName }: RegisterAuthDto) {
+    const proccess = this.dataSource.createQueryRunner();
+    proccess.startTransaction();
+    try {
+      const rol = await proccess.manager.findOneBy(Rol, { name: 'user' });
+      const createUser = proccess.manager.create(User, user);
+      await proccess.manager.save(createUser);
+
+      const newRegister = proccess.manager.create(Auth, {
+        password: bcrypt.hashSync(password, 10),
+        userName,
+        isActive: true,
+        rol,
+        user: createUser,
+      });
+
+      await proccess.manager.save(newRegister);
+      await proccess.commitTransaction();
+
+      return newRegister;
+    } catch (error) {
+      await proccess.rollbackTransaction();
+      throw error;
+    } finally {
+      proccess.release();
+    }
+  }
+
+  async login({ password, userName }: LoginDto) {
+    const user = await this.authRepo.findOne({
+      where: { userName, isActive: true },
+      select: { password: true, userName: true },
+    });
+
+    if (!user) throw new UnauthorizedException('Credentials are not  valid');
+    if (!bcrypt.compareSync(password, user.password))
+      throw new UnauthorizedException('Credentials are not  valid');
+
+    return {
+      ...user,
+      token: this.getJwtToken({ userName }),
+    };
+  }
+
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 }
