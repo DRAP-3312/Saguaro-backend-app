@@ -24,7 +24,10 @@ export class BoardService {
     private readonly wsService: WorkspaceService,
   ) {}
 
-  async create({ idWs, idUser, ...data }: CreateBoardDto): Promise<Board> {
+  async create(
+    { idWs, ...data }: CreateBoardDto,
+    userCurrent: User,
+  ): Promise<Board> {
     const permi: PermissionsInter = {
       create: true,
       delete: true,
@@ -37,18 +40,18 @@ export class BoardService {
 
     process.startTransaction();
     try {
-      const user = await process.manager.findOne(User, {
-        where: { id: idUser },
-        relations: { workspace: true },
-      });
-      if (!user) exceptionMessage('User', idUser, 'notFount', 'id');
+      // const user = await process.manager.findOne(User, {
+      //   where: { id: idUser },
+      //   relations: { workspace: true },
+      // });
+      // if (!user) exceptionMessage('User', idUser, 'notFount', 'id');
 
       const ws = await process.manager.findOne(Workspace, {
         where: { id: idWs },
       });
       if (!ws) exceptionMessage('Workspace', idWs, 'notFount', 'id');
 
-      if (!relations(user.workspace, ws, 'id'))
+      if (!relations(userCurrent.workspace, ws, 'id'))
         throw new BadRequestException(
           'El usuario no es propietario del Workspace',
         );
@@ -61,7 +64,7 @@ export class BoardService {
       await process.manager.save(board);
 
       const guest = process.manager.create(Guest, {
-        idUser: user.id,
+        idUser: userCurrent.id,
         permisos: permi,
         board,
       });

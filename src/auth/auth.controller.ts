@@ -4,10 +4,9 @@ import { RegisterAuthDto } from './dto/register-auth.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Auth } from './entities/auth.entity';
 import { LoginDto } from './dto/login.dto';
-import { GetUser } from './decorators/get-user.decorator';
+import { GetUser, AuthProtected } from './decorators';
 import { User } from 'src/user/entities/user.entity';
 import { ValidRole } from './interfaces/roles-protect.interface';
-import { AuthProtected } from './decorators/auth.decorator';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -35,7 +34,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
   @Get('test')
-  @AuthProtected(ValidRole.ADMIN)
+  @AuthProtected(ValidRole.USER)
   testPrivateRoute(@GetUser() user: User) {
     return {
       ok: true,

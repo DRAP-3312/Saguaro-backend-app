@@ -15,19 +15,12 @@ export class WorkspaceService {
     private readonly dataSource: DataSource,
   ) {}
   async create(
-    iduser: string,
+    user: User,
     createWorkspaceDto: CreateWorkspaceDto,
   ): Promise<Workspace> {
     const query = this.dataSource.createQueryRunner();
     query.startTransaction();
     try {
-      const user = await query.manager.findOne(User, {
-        where: { id: iduser },
-        relations: { workspace: true },
-      });
-
-      if (!user) exceptionMessage('User', iduser, 'notFount', 'id');
-
       const ws = query.manager.create(Workspace, {
         ...createWorkspaceDto,
         user,

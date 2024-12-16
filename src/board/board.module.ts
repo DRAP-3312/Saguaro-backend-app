@@ -6,10 +6,11 @@ import { Board } from './entities/board.entity';
 import { Guest } from './entities/guest.entity';
 import { List } from './entities/list.entity';
 import { WorkspaceModule } from 'src/workspace/workspace.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [BoardController],
   providers: [BoardService],
-  imports: [TypeOrmModule.forFeature([Board, Guest, List]), WorkspaceModule],
+  imports: [TypeOrmModule.forFeature([Board, Guest, List]), WorkspaceModule, AuthModule],
 })
 export class BoardModule {}
