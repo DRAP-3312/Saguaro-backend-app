@@ -29,7 +29,7 @@ export class User {
   @Column('text')
   aboutme: string;
 
-  @OneToMany(() => Workspace, (ws) => ws.user)
+  @OneToMany(() => Workspace, (ws) => ws.user, { eager: true })
   workspace: Workspace[];
 
   @OneToMany(() => Notification, (noti) => noti.user)

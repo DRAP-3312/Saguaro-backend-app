@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create-board.dto';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Board } from './entities/board.entity';
 import { AddGuestToBoard } from './dto/others/addGuesttoBoard.dto';
 import { AddListToBoard } from './dto/others/addListToboard.dto';
@@ -20,6 +20,7 @@ import { ValidRole } from 'src/auth/interfaces/roles-protect.interface';
 
 @ApiTags('Board')
 @Controller('board')
+@ApiBearerAuth('access-token')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
@@ -28,11 +29,25 @@ export class BoardController {
   @ApiResponse({ status: 201, description: 'board created', type: Board })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
-  create(@Body() createBoardDto: CreateBoardDto, @GetUser() user: User) {
+  create(@Body() createBoardDto: CreateBoardDto, @GetUser('user') user: User) {
     return this.boardService.create(createBoardDto, user);
   }
 
+  @Get(':idWS')
+  @AuthProtected(ValidRole.USER)
+  @ApiResponse({
+    status: 201,
+    description: 'board found by Workspace',
+    type: Board,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
+  findBoardByWs(@Param('idWS', ParseUUIDPipe) idWS: string) {
+    return this.boardService.getBoardByWs(idWS);
+  }
+
   @Get(':id')
+  @AuthProtected(ValidRole.USER)
   @ApiResponse({ status: 201, description: 'board found', type: Board })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
@@ -41,6 +56,7 @@ export class BoardController {
   }
 
   @Post('addguest')
+  @AuthProtected(ValidRole.USER)
   @ApiResponse({
     status: 201,
     description: 'add guest to board successfully',
@@ -53,6 +69,7 @@ export class BoardController {
   }
 
   @Post('addList')
+  @AuthProtected(ValidRole.USER)
   @ApiResponse({
     status: 201,
     description: 'add list to board successfully',
@@ -65,6 +82,7 @@ export class BoardController {
   }
 
   @Delete(':id')
+  @AuthProtected(ValidRole.USER)
   @ApiResponse({
     status: 200,
     description: 'delete board successfully',

@@ -36,6 +36,7 @@ export class WorkspaceController {
   }
 
   @Get()
+  @AuthProtected(ValidRole.USER)
   @ApiResponse({
     status: 201,
     description: 'list of workspaces',
@@ -43,8 +44,8 @@ export class WorkspaceController {
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
-  findAll() {
-    return this.workspaceService.findAll();
+  findAll(@GetUser('user') { id }: User) {
+    return this.workspaceService.findAll(id);
   }
 
   @Patch(':id')

@@ -35,9 +35,6 @@ export class CreateBoardDto {
     example: 'string',
     nullable: false,
   })
-  @IsUUID()
-  idUser: string;
-
   @ApiProperty({
     example: 'string',
     nullable: false,

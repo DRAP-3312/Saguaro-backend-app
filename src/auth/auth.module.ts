@@ -22,7 +22,7 @@ import { JwtStrategy } from './strategys/jwt.strategy';
         return {
           secret: process.env.JWT_SECRET,
           signOptions: {
-            expiresIn: '4h',
+            expiresIn: '1h',
           },
         };
       },

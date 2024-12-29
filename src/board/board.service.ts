@@ -24,10 +24,7 @@ export class BoardService {
     private readonly wsService: WorkspaceService,
   ) {}
 
-  async create(
-    { idWs, ...data }: CreateBoardDto,
-    userCurrent: User,
-  ): Promise<Board> {
+  async create({ idWs, ...data }: CreateBoardDto, user: User): Promise<Board> {
     const permi: PermissionsInter = {
       create: true,
       delete: true,
@@ -51,7 +48,7 @@ export class BoardService {
       });
       if (!ws) exceptionMessage('Workspace', idWs, 'notFount', 'id');
 
-      if (!relations(userCurrent.workspace, ws, 'id'))
+      if (!relations(user.workspace, ws, 'id'))
         throw new BadRequestException(
           'El usuario no es propietario del Workspace',
         );
@@ -64,7 +61,7 @@ export class BoardService {
       await process.manager.save(board);
 
       const guest = process.manager.create(Guest, {
-        idUser: userCurrent.id,
+        idUser: user.id,
         permisos: permi,
         board,
       });
@@ -198,5 +195,9 @@ export class BoardService {
     } finally {
       process.release();
     }
+  }
+
+  async getBoardByWs(ws: string): Promise<Board[]> {
+    return await this.boardRepo.find({ where: { workspace: { id: ws } } });
   }
 }

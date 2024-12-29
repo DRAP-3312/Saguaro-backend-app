@@ -38,8 +38,11 @@ export class WorkspaceService {
     }
   }
 
-  async findAll(): Promise<Workspace[]> {
-    return await this.wsRepo.find({ relations: { boards: true, user: true } });
+  async findAll(idUser: string): Promise<Workspace[]> {
+    return await this.wsRepo.find({
+      where: { user: {id: idUser} },
+      relations: { boards: true, user: true },
+    });
   }
 
   async updateWorkspace(id: string, updateWorkspaceDto: UpdateWorkspaceDto) {
