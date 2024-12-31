@@ -32,9 +32,6 @@ export class RegisterAuthDto {
       gender: 'male',
       aboutme: 'nada',
     },
-    nullable: false,
-    minLength: 2,
-    maxLength: 50
   })
   @IsObject()
   user: CreateUserDto;

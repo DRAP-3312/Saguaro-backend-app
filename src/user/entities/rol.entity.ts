@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -15,6 +16,6 @@ export class Rol {
   @Column('text')
   name: string;
 
-  @OneToOne(() => Auth, (auth) => auth.rol)
+  @OneToMany(() => Auth, (auth) => auth.rol)
   auth: Auth;
 }

@@ -21,7 +21,14 @@ export class AuthService {
     const proccess = this.dataSource.createQueryRunner();
     proccess.startTransaction();
     try {
+
+      console.log({
+        user,
+        userName,
+        password
+      })
       const rol = await proccess.manager.findOneBy(Rol, { name: 'user' });
+      
       const createUser = proccess.manager.create(User, user);
       await proccess.manager.save(createUser);
 
@@ -36,7 +43,10 @@ export class AuthService {
       await proccess.manager.save(newRegister);
       await proccess.commitTransaction();
 
-      return newRegister;
+      return {
+        ok: true,
+        message: 'Usuario registrado correctamente'
+      };
     } catch (error) {
       await proccess.rollbackTransaction();
       throw error;

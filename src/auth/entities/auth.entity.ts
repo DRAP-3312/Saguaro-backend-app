@@ -4,6 +4,8 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -26,7 +28,7 @@ export class Auth {
   @JoinColumn({ name: 'idUser' })
   user: User;
 
-  @OneToOne(() => Rol, (rol) => rol.auth, { eager: true })
-  @JoinColumn({ name: 'idRol' })
+  @ManyToOne(() => Rol, (rol) => rol.auth, { eager: true })
+  @JoinColumn({name: 'idRol'})
   rol: Rol;
 }
