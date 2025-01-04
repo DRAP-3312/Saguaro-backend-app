@@ -22,11 +22,6 @@ export class AuthService {
     proccess.startTransaction();
     try {
 
-      console.log({
-        user,
-        userName,
-        password
-      })
       const rol = await proccess.manager.findOneBy(Rol, { name: 'user' });
       
       const createUser = proccess.manager.create(User, user);
@@ -74,5 +69,17 @@ export class AuthService {
   private getJwtToken(payload: JwtPayload) {
     const token = this.jwtService.sign(payload);
     return token;
+  }
+
+
+  checkStatus(ok:boolean, message:string, user:User){
+    const token = this.getJwtToken({id: user.id})
+
+    return {
+      ok,
+      message,
+      user,
+      token
+    }
   }
 }

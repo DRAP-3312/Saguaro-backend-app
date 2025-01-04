@@ -33,13 +33,9 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'test ok' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related' })
-  @Get('test')
+  @Get('check-status')
   @AuthProtected(ValidRole.USER)
   testPrivateRoute(@GetUser() user: User) {
-    return {
-      ok: true,
-      message: 'prueba validacion y autorizacion',
-      user,
-    };
+    return this.authService.checkStatus(true, 'Usuario Autorizado', user)
   }
 }
